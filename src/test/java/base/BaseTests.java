@@ -16,7 +16,7 @@ public class BaseTests {
 
     @BeforeAll
         public static void inicializar() {
-            System.setProperty("webdriver.chrome.driver","D:\\SeleniumWebDiverIterasys\\ecommerce_prestashop\\drive\\chromedriver.exe");
+            System.setProperty("webdriver.chrome.driver","D:\\Repositories\\SeleniumWebDiverIterasys\\ecommerce_prestashop_WebTests\\drive\\chromedriver.exe");
             driver = new ChromeDriver();
             driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         }

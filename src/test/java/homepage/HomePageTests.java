@@ -2,6 +2,7 @@ package homepage;
 
 import base.BaseTests;
 import org.junit.jupiter.api.Test;
+import pages.LoginPage;
 import pages.ProdutoPage;
 
 import java.util.List;
@@ -44,12 +45,18 @@ public class HomePageTests extends BaseTests {
     @Test
     public void testLoginComSucesso_UsuarioLogado(){
         //Clicar no botão Sign In
+        LoginPage loginPage = homePage.clicarBotaoSignIn();
 
         //Preencher usuario e senha
+        loginPage.preencherEmail("doralice@teste.com");
+        loginPage.preencherPassword("123456");
 
         //Clicar no botão para logar
+        loginPage.clicarBotaoSignIn();
 
         //Validar o login
+        assertThat(homePage.estaLogado("Doralice Mendes"),is (true));
+
 
     }
 }
