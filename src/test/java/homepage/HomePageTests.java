@@ -3,12 +3,15 @@ package homepage;
 import base.BaseTests;
 import org.junit.jupiter.api.Test;
 import pages.LoginPage;
+import pages.ModalProdutoPage;
 import pages.ProdutoPage;
 
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HomePageTests extends BaseTests {
     @Test
@@ -22,6 +25,7 @@ public class HomePageTests extends BaseTests {
         //System.out.println(produtosNoCarrinho);
         assertThat(produtosNoCarrinho, is(0));
     }
+    ProdutoPage produtoPage;
     @Test
     public void testValidarDetalhesDoProduto_DescricaoEValor(){
         int indice = 0;
@@ -31,7 +35,7 @@ public class HomePageTests extends BaseTests {
         System.out.println(nomeProduto_HomePage);
         System.out.println(precoProduto_HomePage);
 
-        ProdutoPage produtoPage = homePage.clicarProduto(indice);
+        produtoPage = homePage.clicarProduto(indice);
 
         String nomeProduto_ProdutoPage = produtoPage.obterNomeProduto();
         String precoProduto_ProdutoPage = produtoPage.obterPrecoProduto();
@@ -42,10 +46,11 @@ public class HomePageTests extends BaseTests {
         assertThat(nomeProduto_HomePage.toUpperCase(), is(nomeProduto_ProdutoPage.toUpperCase()));
         assertThat(precoProduto_HomePage, is (precoProduto_ProdutoPage));
     }
+    LoginPage loginPage;
     @Test
     public void testLoginComSucesso_UsuarioLogado(){
         //Clicar no botão Sign In
-        LoginPage loginPage = homePage.clicarBotaoSignIn();
+        loginPage = homePage.clicarBotaoSignIn();
 
         //Preencher usuario e senha
         loginPage.preencherEmail("doralice@teste.com");
@@ -57,6 +62,43 @@ public class HomePageTests extends BaseTests {
         //Validar o login
         assertThat(homePage.estaLogado("Doralice Mendes"),is (true));
 
-
+        carregarPaginaInicial();
     }
+    @Test
+    public void incluirProdutoNoCarrinho_ProdutoIncluidoComSucesso(){
+        String tamanhoProduto = "M";
+        String corProduto = "Black";
+        int quantidadeProduto = 2;
+
+        // Pre-condição
+        //usuario logado
+        if(!homePage.estaLogado("Doralice Mendes")){
+            testLoginComSucesso_UsuarioLogado();
+        }
+        //selecionando produto
+        testValidarDetalhesDoProduto_DescricaoEValor();
+
+        //selecionar tamanho
+        List<String> listaOpcoes = produtoPage.obterOpcoesSelecionadas();
+        System.out.println(listaOpcoes.get(0));
+        System.out.println("Tamanho da lista: " + listaOpcoes.size());
+
+        produtoPage.selecionarOpcaoDropdownSize(tamanhoProduto);
+        listaOpcoes = produtoPage.obterOpcoesSelecionadas();
+        System.out.println(listaOpcoes.get(0));
+        System.out.println("Tamanho da lista: " + listaOpcoes.size());
+
+        //selecionar cor
+        produtoPage.selecionarCorPreta(corProduto);
+
+        //selecionar quantidade
+        produtoPage.alterarQuantidade(quantidadeProduto);
+
+        //adicionar no carrinho
+        ModalProdutoPage modalProdutoPage = produtoPage.clicarBotaoAddtoCard();
+        //assertThat(modalProdutoPage.obterMendagemProdutoAdicionado(), is ("Product successfully added to your shopping cart"));
+        assertTrue(modalProdutoPage.obterMendagemProdutoAdicionado().endsWith("Product successfully added to your shopping cart"));
+    }
+
+
 }
